@@ -9,6 +9,10 @@ import (
 	"strings"
 	"text/template"
 
+	"golang.org/x/net/websocket"
+
+	_ "net/http/pprof"
+
 	"github.com/boltdb/bolt"
 	"github.com/julienschmidt/httprouter"
 )
@@ -96,23 +100,6 @@ func pushWarriorToTop(p int, r phaseResult) {
 	}
 }
 
-func phaseRest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	phase, _ := strconv.Atoi(ps.ByName("phase"))
-	p := phaseInformation{phaseTop[phase], currentConfig.Phases[phase].Total, currentConfig.Phases[phase].Passed, currentConfig.Phases[phase].GetFailed(), currentConfig.Phases[phase].Bestscore}
-	bytes, _ := json.Marshal(p)
-	w.Write(bytes)
-}
-
-func metricsRest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	m := make(map[string]int)
-	m["Rounds"] = roundsMetrics
-	m["Fights"] = fightMetrics
-	b, _ := json.Marshal(m)
-	w.Write(b)
-	roundsMetrics = 0
-	fightMetrics = 0
-}
-
 func constructRest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	s := strings.Split(ps.ByName("ints"), ",")
 	is := make([]int, len(s))
@@ -149,13 +136,17 @@ func stopRest(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func initRest() {
 	router := httprouter.New()
+
 	router.GET("/", indexRest)
 	router.GET("/api/stop", stopRest)
 	router.GET("/api/config", configRest)
-	router.GET("/api/metrics", metricsRest)
-	router.GET("/api/phase/:phase", phaseRest)
 	router.GET("/api/warrior/:ints", constructRest)
+
+	router.Handler("GET", "/ws", websocket.Handler(wsHandler))
+
 	router.NotFound = http.FileServer(http.Dir("public"))
+
+	go wsWorker()
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

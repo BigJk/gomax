@@ -82,6 +82,12 @@ h4 {
 	line-height: 8px;
 }
 
+.topm {
+	margin: 22px auto;
+	text-align: center;
+	display: block;
+}
+
 .header .button {
 	margin-top: 10px;
 }
@@ -92,4 +98,18 @@ h4 {
 
 #rps {
 	line-height: 40px;
+}
+
+.fa-angle-double-down {
+	color: #f03333;
+}
+
+.blink {
+	color: #33C3F0;
+	animation: blinker 1s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+
+@keyframes blinker {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

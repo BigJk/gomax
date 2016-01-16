@@ -108,7 +108,7 @@ func run() {
 		return nil
 	})
 
-	changeChannel = make(chan change, 100)
+	changeChannel = make(chan change, 500)
 	calcChan = make(chan []int)
 
 	log.Println("Starting to optimize...")
