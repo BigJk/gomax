@@ -1,0 +1,95 @@
+body {
+	padding: 25px 0 0 0;
+}
+
+.row {
+	border-bottom: 1px solid #eee;
+	margin-bottom: 20px;
+}
+
+.border-top {
+	border-top: 1px solid #eee;
+}
+
+.no-border {
+	border-bottom: none;
+}
+
+.fix-pad {
+	padding-bottom: 20px;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.push-top {
+	margin-top: 50px;
+}
+
+.fa-check {
+	color: #33C3F0 !important;
+}
+
+.fa-times {
+	color: #f03333 !important;
+}
+
+.p-chart {
+	margin-bottom: 30px;
+	padding-top: 15px;
+	height: 200px;
+}
+
+.show {
+	color: #33C3F0 !important;
+	cursor: pointer;
+}
+
+.overlay {
+	top: 0;
+	left: 0;
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.40);
+	width: 100%;
+	height: 100%;
+}
+
+.footer {
+	margin-top: 30px;
+	color: #fff;
+	width: 100%;
+	height: 100px;
+	background-color: #1f1f1f;
+	line-height: 100px;
+}
+
+.footer .row {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+.footer a {
+	text-decoration: none;
+}
+
+h4 {
+	display: inline;
+}
+
+.header {
+	padding-bottom: 10px;
+	line-height: 8px;
+}
+
+.header .button {
+	margin-top: 10px;
+}
+
+.sub {
+	font-size: 13px;
+}
+
+#rps {
+	line-height: 40px;
+}

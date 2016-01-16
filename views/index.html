@@ -1,0 +1,304 @@
+{{define "Index"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta charset="utf-8">
+	<title>gomax</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link href="http://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	<!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<link rel="stylesheet" href="css/c3.min.css">
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/skeleton.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- JS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+	<script src="js/d3.min.js" charset="utf-8"></script>
+	<script src="js/c3.min.js" charset="utf-8"></script>
+	<script>
+		var phases = {{pcount}};
+		var charts = {};
+	</script>
+
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="row header">
+			<div class="eight columns">
+				<h4>gomax<i class="fa fa-rocket"></i></h4><br><span class="sub">optimize warrior like never before!</span>
+			</div>
+			<div class="one columns">
+				<a class="button" href="/api/config" target="_blank"><i class="fa fa-cog fa-lg"></i></a>
+			</div>
+			<div class="three columns">
+				<a class="button button-primary u-full-width" onclick="exit();">Stop Program</a>
+			</div>
+		</div>
+
+		<div class="row fix-pad text-center no-border push-top">
+			<div class="two columns">
+				<strong>Coresize:</strong>
+				<br>{{.Config.Mars.Coresize}}
+			</div>
+			<div class="two columns">
+				<strong>Cycles:</strong>
+				<br>{{.Config.Mars.Cycles}}
+			</div>
+			<div class="two columns">
+				<strong>Max Process:</strong>
+				<br>{{.Config.Mars.Maxprocess}}
+			</div>
+			<div class="two columns">
+				<strong>Warrior Length:</strong>
+				<br>{{.Config.Mars.Maxwarriorlen}}
+			</div>
+			<div class="two columns">
+				<strong>Suite:</strong>
+				<br>{{.Config.Suite}}
+			</div>
+			<div class="two columns">
+				<strong>EocTest:</strong>
+				<br>{{.Config.EocTest}}
+			</div>
+		</div>
+
+		<div class="row push-top">
+			<div class="five columns">
+				<h4>Rounds per Second</h4>
+			</div>
+			<div class="one columns">
+				<span id="rps" class="u-pull-right">-</span>
+			</div>
+			<div class="five columns">
+				<h4>Fights per Second</h4>
+			</div>
+			<div class="one columns">
+				<span id="fps" class="u-pull-right">-</span>
+			</div>
+		</div>
+
+		<div class="row no-border">
+			<div class="six columns">
+				<div id="rchart" style="height:150px;"></div>
+				<script type="text/javascript">
+					rchart = c3.generate({
+						bindto: '#rchart',
+						tooltip: {
+							show: false
+						},
+						legend: {
+							show: false
+						},
+						axis: {
+						  y: {
+						    tick: {
+							  values: [250, 500, 1000, 1500, 2000, 3000, 4000, 5000]
+						    }
+						  }
+					  },
+						data: {
+					        columns: [
+					            ['d', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+					        ],
+					        types: {
+					            d: 'area-spline'
+					        }
+					    }
+					});
+				</script>
+			</div>
+			<div class="six columns">
+				<div id="fchart" style="height:150px;"></div>
+				<script type="text/javascript">
+					fchart = c3.generate({
+						bindto: '#fchart',
+						tooltip: {
+							show: false
+						},
+						legend: {
+							show: false
+						},
+						axis: {
+						  y: {
+						    tick: {
+							  values: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+						    }
+						  }
+					  },
+						data: {
+					        columns: [
+					            ['d', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+					        ],
+					        types: {
+					            d: 'area-spline'
+					        }
+					    }
+					});
+				</script>
+			</div>
+		</div>
+
+		{{range $i, $p := .Phases}}
+
+		<div class="row push-top">
+			<div class="twelve columns">
+				<h4>{{$p.Phase.Name}}</h4>
+			</div>
+		</div>
+
+		<div id="p{{$i}}" class="row no-border">
+			<div class="three columns">
+				<ul>
+					<li>
+						<strong>Rounds:</strong>
+						<span class="u-pull-right">{{$p.Phase.Rounds}}</span>
+					</li>
+					<li>
+						<strong>Threshold:</strong>
+						<span class="u-pull-right">{{$p.Phase.Threshold}}</span>
+					</li>
+					<li>
+						<strong>Static:</strong>
+						<span class="u-pull-right">{{$p.Phase.Static}}</span>
+					</li>
+					{{if $p.Phase.Static}}{{else}}
+					<li>
+						<strong>Bestscore:</strong>
+						<span class="u-pull-right">{{$p.Phase.Bestscore}}</span>
+					</li>
+					{{end}} {{if $p.Phase.OponentPath}}
+					<li>
+						<strong>Oponent:</strong>
+					</li>
+					<ul>
+						<li>{{$p.Phase.GetOponentFileName}}</li>
+					</ul>
+					{{else}}
+					<li>
+						<strong>Oponents:</strong>
+					</li>
+					<ul>
+						{{range $j, $t := $p.Phase.OponentTypes}}
+						<li>{{$t}}</li>
+						{{end}}
+					</ul>
+					{{end}}
+				</ul>
+				<div id="p{{$i}}chart" class="p-chart u-full-width border-top"></div>
+				<script type="text/javascript">
+					charts['{{$i}}'] = c3.generate({
+						bindto: '#p{{$i}}chart',
+						tooltip: {
+							show: false
+						},
+						data: {
+							selection: {
+								enabled: true
+							},
+							colors: {
+								Passed: '#33C3F0',
+							},
+							columns: [
+								['Passed', {{$p.Phase.Passed}}],
+								['Failed', {{$p.Phase.GetFailed}}],
+							],
+							type: 'pie'
+						}
+					});
+				</script>
+				<ul>
+					<li>
+						<strong>Total:</strong>
+						<span id="p{{$i}}total" class="u-pull-right">{{$p.Phase.Total}}</span>
+					</li>
+					<li>
+						<strong>Failed:</strong>
+						<span id="p{{$i}}failed" class="u-pull-right">{{$p.Phase.GetFailed}}</span>
+					</li>
+					<li>
+						<strong>Passed:</strong>
+						<span id="p{{$i}}passed" class="u-pull-right">{{$p.Phase.Passed}}</span>
+					</li>
+				</ul>
+
+			</div>
+			<div class="nine columns">
+				<table class="u-full-width">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>ID</th>
+							<th>W / T / L</th>
+							<th>Score</th>
+							<th class="text-center">Passed</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody id="p{{$i}}table">
+						{{range $j, $r := $p.PhaseResults}}
+						<tr id="p{{$i}}{{$j}}">
+							<td>{{$j}}</td>
+							<td id="p{{$i}}{{$j}}id">{{$r.GetID}}</td>
+							<td id="p{{$i}}{{$j}}res">{{$r.Result.Win}} / {{$r.Result.Equal}} / {{$r.Result.Lose}}</td>
+							<td id="p{{$i}}{{$j}}score">{{$r.Score}}</td>
+							<td id="p{{$i}}{{$j}}passed" class="text-center">
+								{{if $r.Passed}}
+								<i class="fa fa-check"></i> {{else}}
+								<i class="fa fa-times"></i> {{end}}
+							</td>
+							<td id="p{{$i}}{{$j}}show" class="show"><a href="/api/warrior/{{$r.GetID}}" target="_blank"><i class="fa fa-search"></i></a></td>
+						</tr>
+						{{end}}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		{{end}}
+
+	</div>
+
+	<div class="footer">
+
+		<div class="container">
+			<div class="row no-border">
+				<div class="three columns">
+					created by <a href="https://github.com/BigJk">BigJk</a>
+				</div>
+				<div class="nine columns">
+					<span class="u-pull-right"><b>gomax</b> uses <a href="http://getskeleton.com/">skeleton</a>, <a href="https://github.com/boltdb/bolt">BoltDB</a> and <a href="http://corewar.co.uk/ankerl/exmars.htm">exmars</a></span>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script src="js/cash.min.js" charset="utf-8"></script>
+	<script src="js/app.js" charset="utf-8"></script>
+	<script>
+		setInterval(reload, 1000);
+		setInterval(reloadCharts, 5000);
+	</script>
+
+</body>
+
+</html>
+{{end}}
