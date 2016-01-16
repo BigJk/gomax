@@ -14,10 +14,11 @@ import (
 )
 
 type phaseInformation struct {
-	Top    []phaseResult
-	Total  int
-	Passed int
-	Failed int
+	Top       []phaseResult
+	Total     int
+	Passed    int
+	Failed    int
+	Bestscore float32
 }
 
 type indexPhase struct {
@@ -97,7 +98,7 @@ func pushWarriorToTop(p int, r phaseResult) {
 
 func phaseRest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	phase, _ := strconv.Atoi(ps.ByName("phase"))
-	p := phaseInformation{phaseTop[phase], currentConfig.Phases[phase].Total, currentConfig.Phases[phase].Passed, currentConfig.Phases[phase].GetFailed()}
+	p := phaseInformation{phaseTop[phase], currentConfig.Phases[phase].Total, currentConfig.Phases[phase].Passed, currentConfig.Phases[phase].GetFailed(), currentConfig.Phases[phase].Bestscore}
 	bytes, _ := json.Marshal(p)
 	w.Write(bytes)
 }

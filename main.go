@@ -141,12 +141,13 @@ func createDatabse() {
 	db, _ = bolt.Open(dbOutput, 0600, nil)
 	defer db.Close()
 
-	c := config{}
 	b, _ := ioutil.ReadFile(configPath)
-	json.Unmarshal(b, &c)
+	json.Unmarshal(b, &currentConfig)
 
-	for i := 0; i < len(c.Phases); i++ {
-		c.Phases[i].loadOponents(c.Suite)
+	initMars()
+
+	for i := 0; i < len(currentConfig.Phases); i++ {
+		currentConfig.Phases[i].loadOponents(currentConfig.Suite)
 	}
 
 	bytes, _ := ioutil.ReadFile(warriorPath)
@@ -154,13 +155,13 @@ func createDatabse() {
 
 	db.Update(func(tx *bolt.Tx) error {
 		settings, _ := tx.CreateBucket([]byte("settings"))
-		settings.Put([]byte("config"), encodeInterface(c))
+		settings.Put([]byte("config"), encodeInterface(currentConfig))
 		settings.Put([]byte("warriorcode"), bytes)
 		settings.Put([]byte("warrior"), encodeInterface(w))
 		settings.Put([]byte("states"), encodeInterface(make([]int, w.operatorSize())))
 		settings.Put([]byte("closed"), encodeInterface(false))
 
-		for i := 0; i < len(c.Phases); i++ {
+		for i := 0; i < len(currentConfig.Phases); i++ {
 			tx.CreateBucket([]byte("phase" + strconv.Itoa(i)))
 		}
 

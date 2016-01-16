@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"io/ioutil"
+	"log"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -83,7 +84,12 @@ func (p *phase) loadOponents(suite string) {
 		files, _ := filepath.Glob(suite + "/" + v + "/*.red")
 		for _, w := range files {
 			b, _ := ioutil.ReadFile(w)
-			p.OponentWarriors = append(p.OponentWarriors, fixWarrior(b))
+			wstr := fixWarrior(b)
+			if eocTest(wstr, 1) {
+				p.OponentWarriors = append(p.OponentWarriors, wstr)
+			} else {
+				log.Println("Defect warrior skipped...")
+			}
 		}
 	}
 }

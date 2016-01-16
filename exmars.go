@@ -59,6 +59,10 @@ func fight(w1 string, w2 string, rounds int) result {
 	fightMetrics++
 	roundsMetrics += rounds
 
+	if r.Equal+r.Lose+r.Win != rounds {
+		return result{0, 0, 0}
+	}
+
 	return r
 }
 

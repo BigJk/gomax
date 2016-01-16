@@ -20,6 +20,9 @@ function addRounds() {
 			],
 			length: 1,
 		});
+		if (rchart.data()[0].values.length > 16) {
+			rchart.data()[0].values = rchart.data()[0].values.slice(1, 17);
+		}
 
 		$('#fps').text(d.Fights);
 		fchart.flow({
@@ -64,6 +67,7 @@ function reloadPhase(phase) {
 		$('#p' + phase + 'total').text(d.Total);
 		$('#p' + phase + 'failed').text(d.Failed);
 		$('#p' + phase + 'passed').text(d.Passed);
+		$('#p' + phase + 'bs').text(d.Bestscore);
 
 		for (var i = 0; i < d.Top.length; i++) {
 			if ($('#p' + phase + i)[0] === null) {
