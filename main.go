@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
+	"reflect"
 	"regexp"
 	"strconv"
 	"sync"
@@ -32,12 +34,19 @@ func (c *config) decode(b []byte) {
 
 var currentConfig config
 var currentWarrior warrior
-var flatOperator *regexp.Regexp
+var flatOperatorRegex *regexp.Regexp
+var deepOperatorRegex *regexp.Regexp
 var calcChan chan []int
 var workerWaitGroup sync.WaitGroup
 
 func main() {
-	flatOperator = regexp.MustCompile("!\\((\\d*)-(\\d*)\\)")
+	rand.Seed(time.Now().Unix())
+
+	gob.Register(deepOperator{})
+	gob.Register(flatOperator{})
+
+	flatOperatorRegex = regexp.MustCompile("!\\((\\d*)-(\\d*)\\)")
+	deepOperatorRegex = regexp.MustCompile("!{(\\d*)-(\\d*)}")
 
 	if len(os.Args) == 1 {
 		fmt.Println("gomax commands:")
@@ -162,44 +171,33 @@ func createDatabse() {
 	fmt.Println("Use 'gomax run " + dbOutput + " 6' to start optimizing.")
 }
 
-func encodeInterface(i interface{}) []byte {
-	buffer := new(bytes.Buffer)
-	enc := gob.NewEncoder(buffer)
-	enc.Encode(i)
-	return buffer.Bytes()
-}
-
-func decodeInts(b []byte) []int {
-	buffer := bytes.NewBuffer(b)
-	var i []int
-	dec := gob.NewDecoder(buffer)
-	dec.Decode(&i)
-	return i
-}
-
-func decodeBool(b []byte) bool {
-	buffer := bytes.NewBuffer(b)
-	var i bool
-	dec := gob.NewDecoder(buffer)
-	dec.Decode(&i)
-	return i
-}
-
-func intsToString(i []int) string {
-	out := ""
-	for _, v := range i {
-		out += strconv.Itoa(v)
-	}
-	return out
-}
-
 func calcAll(states []int) {
+	ft := reflect.ValueOf(flatOperator{}).String()
+	//dt := reflect.ValueOf(deepOperator{})
+
+	var types []int
+
+	for i := 0; i < currentWarrior.operatorSize(); i++ {
+		if reflect.ValueOf(currentWarrior.getOperator(i)).String() == ft {
+			types = append(types, 0)
+		} else {
+			types = append(types, 1)
+		}
+	}
+
 	for currentConfig.Running {
 		for i := 0; i < currentWarrior.operatorSize(); i++ {
-			if states[i] == currentWarrior.getOperator(i).size() {
-				states[i] = 0
-				if i+1 < currentWarrior.operatorSize() {
-					states[i+1]++
+			o := currentWarrior.getOperator(i)
+			if o.isMax(states[i]) {
+				if types[i] == 0 {
+					states[i] = rand.Intn(o.max()-o.min()) + o.min()
+				} else {
+					states[i] = 0
+					if i+1 < currentWarrior.operatorSize() {
+						if types[i+1] == 1 {
+							states[i+1]++
+						}
+					}
 				}
 			}
 		}

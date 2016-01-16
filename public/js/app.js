@@ -28,6 +28,9 @@ function addRounds() {
 			],
 			length: 1,
 		});
+		if (fchart.data()[0].values.length > 16) {
+			fchart.data()[0].values = fchart.data()[0].values.slice(1, 17);
+		}
 	});
 }
 
@@ -86,7 +89,7 @@ function reloadPhase(phase) {
 			} else {
 				$('#p' + phase + i + 'passed').html('<i class="fa fa-times"></i></td>');
 			}
-			$('#p' + phase + i + 'show').attr('href', '/api/warrior/' + id);
+			$('#p' + phase + i + 'show a').attr('href', '/api/warrior/' + id);
 		}
 	});
 }

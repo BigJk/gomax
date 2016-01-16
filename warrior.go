@@ -32,7 +32,7 @@ func (w *warrior) push(is []int) {
 		res := currentConfig.Phases[i].pass(wcode, is)
 		pushChange("phase"+strconv.Itoa(i), intsToString(is), encodeInterface(res))
 		pushWarriorToTop(i, res)
-		log.Println("finished", p.Name, "result", res.Combination, res.Score)
+		log.Println(p.Name, "result", res.Combination, res.Score)
 		if !res.Passed {
 			break
 		}
