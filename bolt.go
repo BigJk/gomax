@@ -18,7 +18,7 @@ func pushChange(bucket string, key string, data []byte) {
 func boltWorker() {
 	for {
 		c := <-changeChannel
-		db.Update(func(tx *bolt.Tx) error {
+		db.Batch(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte(c.Bucket))
 			b.Put([]byte(c.Key), c.Data)
 			return nil

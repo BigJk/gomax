@@ -21,6 +21,8 @@ func wsHandler(ws *websocket.Conn) {
 		connection.Close()
 	}
 	connection = ws
+	roundsMetrics = 0
+	fightMetrics = 0
 	for connection != nil && connection.LocalAddr().String() == connection.LocalAddr().String() {
 
 	}
