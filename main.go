@@ -83,7 +83,7 @@ func main() {
 }
 
 func createConfig() {
-	c := config{marsSettings{8000, 80000, 8000, 200}, true, "suite_folder", make([]phase, 0), false}
+	c := config{marsSettings{8000, 80000, 8000, 200, 4000}, true, "suite_folder", make([]phase, 0), false}
 	c.Phases = append(c.Phases, phase{"Non-Starter Selection", 25, 50, 85, false, "path_to_warrior", make([]string, 0), make([]string, 0), 0, 0, 0})
 	c.Phases = append(c.Phases, phase{"Preselection", 25, 25, 90, false, "", []string{"scn", "clr"}, make([]string, 0), 0, 0, 0})
 	c.Phases = append(c.Phases, phase{"Grand Prix", 25, 25, 100, false, "", []string{"cds", "clr", "pap", "pwi", "pws", "sbi", "scn", "stn"}, make([]string, 0), 0, 0, 0})

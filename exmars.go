@@ -10,6 +10,7 @@ type marsSettings struct {
 	Cycles        int `json:"cycles"`
 	Maxprocess    int `json:"maxprocess"`
 	Maxwarriorlen int `json:"maxwarriorlen"`
+	FixedPos      int `json:"fixedpos"`
 }
 
 type result struct {
@@ -30,6 +31,15 @@ func initMars() {
 	f1w = exmars.NewProc("Fight1Warrior")
 }
 
+func fixWarrior(w []byte) string {
+	for i := 0; i < len(w); i++ {
+		if w[i] == 0 {
+			w[i] = 57
+		}
+	}
+	return string(w)
+}
+
 func fight(w1 string, w2 string, rounds int) result {
 	r := result{}
 
@@ -41,6 +51,7 @@ func fight(w1 string, w2 string, rounds int) result {
 		uintptr(currentConfig.Mars.Maxprocess),
 		uintptr(rounds),
 		uintptr(currentConfig.Mars.Maxwarriorlen),
+		uintptr(currentConfig.Mars.FixedPos),
 		uintptr(unsafe.Pointer(&r.Win)),
 		uintptr(unsafe.Pointer(&r.Lose)),
 		uintptr(unsafe.Pointer(&r.Equal)))
@@ -61,6 +72,7 @@ func eocTest(w string, rounds int) bool {
 		uintptr(currentConfig.Mars.Maxprocess),
 		uintptr(rounds),
 		uintptr(currentConfig.Mars.Maxwarriorlen),
+		uintptr(currentConfig.Mars.FixedPos),
 		uintptr(unsafe.Pointer(&r.Win)),
 		uintptr(unsafe.Pointer(&r.Lose)),
 		uintptr(unsafe.Pointer(&r.Equal)))

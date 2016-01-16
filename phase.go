@@ -77,13 +77,13 @@ func (p *phase) GetFailed() int {
 func (p *phase) loadOponents(suite string) {
 	if p.OponentPath != "" {
 		b, _ := ioutil.ReadFile(p.OponentPath)
-		p.OponentWarriors = append(p.OponentWarriors, string(b))
+		p.OponentWarriors = append(p.OponentWarriors, fixWarrior(b))
 	}
 	for _, v := range p.OponentTypes {
 		files, _ := filepath.Glob(suite + "/" + v + "/*.red")
 		for _, w := range files {
 			b, _ := ioutil.ReadFile(w)
-			p.OponentWarriors = append(p.OponentWarriors, string(b))
+			p.OponentWarriors = append(p.OponentWarriors, fixWarrior(b))
 		}
 	}
 }
