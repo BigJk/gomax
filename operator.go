@@ -1,9 +1,6 @@
 package main
 
-import (
-	"log"
-	"strconv"
-)
+import "strconv"
 
 type operator interface {
 	max() int
@@ -71,8 +68,6 @@ func (f flatOperator) isMax(i int) bool {
 }
 
 func parseLine(line string) (operator, bool) {
-	log.Println(line)
-
 	flatMatch := flatOperatorRegex.FindAllStringSubmatch(line, 1)
 	deepMatch := deepOperatorRegex.FindAllStringSubmatch(line, 1)
 
