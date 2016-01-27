@@ -32,7 +32,7 @@
 	<script src="js/d3.min.js" charset="utf-8"></script>
 	<script src="js/c3.min.js" charset="utf-8"></script>
 	<script>
-		var phases = {{pcount}};
+		var phases = {{ len .Config.Phases }};
 		var charts = {};
 	</script>
 
@@ -259,8 +259,8 @@
 						<tr id="p{{$i}}{{$j}}">
 							<td>{{$j}}</td>
 							<td id="p{{$i}}{{$j}}id">{{$r.GetID}}</td>
-							<td id="p{{$i}}{{$j}}res">{{$r.Result.Win}} / {{$r.Result.Equal}} / {{$r.Result.Lose}}</td>
-							<td id="p{{$i}}{{$j}}score">{{$r.Score}}</td>
+							<td id="p{{$i}}{{$j}}res">{{$r.Result.WinPercent}}% / {{$r.Result.EqualPercent}}% / {{$r.Result.LosePercent}}%</td>
+							<td id="p{{$i}}{{$j}}score">{{$r.Score | round}}</td>
 							<td id="p{{$i}}{{$j}}passed" class="text-center">
 								{{if $r.Passed}}
 								<i class="fa fa-check"></i> {{else}}

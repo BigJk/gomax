@@ -30,6 +30,7 @@ function addMetrics(d) {
 	});
 	if (rchart.data()[0].values.length > 16) {
 		rchart.data()[0].values = rchart.data()[0].values.slice(1, 17);
+		rchart.flush();
 	}
 
 	$('#fps').text(d.Fights);
@@ -41,6 +42,7 @@ function addMetrics(d) {
 	});
 	if (fchart.data()[0].values.length > 16) {
 		fchart.data()[0].values = fchart.data()[0].values.slice(1, 17);
+		fchart.flush();
 	}
 }
 
@@ -77,7 +79,7 @@ function updatePhase(phase, d) {
 	$('#p' + phase + 'total').text(d.Total);
 	$('#p' + phase + 'failed').text(d.Failed);
 	$('#p' + phase + 'passed').text(d.Passed);
-	$('#p' + phase + 'bs').text(d.Bestscore);
+	$('#p' + phase + 'bs').text(d.Bestscore.toFixed(2));
 
 	for (var i = 0; i < d.Top.length; i++) {
 		if ($('#p' + phase + i)[0] === null) {
@@ -97,7 +99,7 @@ function updatePhase(phase, d) {
 
 		$('#p' + phase + i + 'id').text(id);
 		$('#p' + phase + i + 'res').text(d.Top[i].Result.Win + ' / ' + d.Top[i].Result.Equal + ' / ' + d.Top[i].Result.Lose);
-		$('#p' + phase + i + 'score').text(d.Top[i].Score);
+		$('#p' + phase + i + 'score').text(d.Top[i].Score.toFixed(2));
 		if (d.Top[i].Passed) {
 			$('#p' + phase + i + 'passed').html('<i class="fa fa-check"></i></td>');
 		} else {

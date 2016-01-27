@@ -19,6 +19,21 @@ type result struct {
 	Equal int
 }
 
+// WinPercent ...
+func (r *result) WinPercent() int {
+	return int((float32(r.Win) / float32(r.Win+r.Lose+r.Equal)) * 100.0)
+}
+
+// LosePercent ...
+func (r *result) LosePercent() int {
+	return int((float32(r.Lose) / float32(r.Win+r.Lose+r.Equal)) * 100.0)
+}
+
+// EqualPercent ...
+func (r *result) EqualPercent() int {
+	return int((float32(r.Equal) / float32(r.Win+r.Lose+r.Equal)) * 100.0)
+}
+
 var roundsMetrics int
 var fightMetrics int
 var exmars *syscall.LazyDLL

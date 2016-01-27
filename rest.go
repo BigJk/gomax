@@ -115,12 +115,12 @@ func configRest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Write(b)
 }
 
-func phasesCount() int {
-	return len(currentConfig.Phases)
+func floatRound(args ...interface{}) string {
+	return strconv.FormatFloat(float64(args[0].(float32)), 'f', 2, 64)
 }
 
 func indexRest(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	funcs := template.FuncMap{"pcount": phasesCount}
+	funcs := template.FuncMap{"round": floatRound}
 	t, _ := template.New("Index").Funcs(funcs).ParseFiles("views/index.html")
 	index := indexTemplate{currentConfig, make([]indexPhase, len(currentConfig.Phases))}
 	for i := 0; i < len(currentConfig.Phases); i++ {
