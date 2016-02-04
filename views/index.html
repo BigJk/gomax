@@ -22,18 +22,23 @@
 
 	<!-- CSS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-	<link rel="stylesheet" href="css/c3.min.css">
+	<link rel="stylesheet" href="css/sweetalert.css">
 	<link rel="stylesheet" href="css/normalize.css">
 	<link rel="stylesheet" href="css/skeleton.css">
 	<link rel="stylesheet" href="css/style.css">
 
 	<!-- JS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-	<script src="js/d3.min.js" charset="utf-8"></script>
-	<script src="js/c3.min.js" charset="utf-8"></script>
+	<script src="js/Chart.min.js" charset="utf-8"></script>
+	<script src="js/util.js" charset="utf-8"></script>
 	<script>
 		var phases = {{ len .Config.Phases }};
+		var dataPoints = 20;
 		var charts = {};
+
+		Chart.defaults.global.showTooltips = false;
+		Chart.defaults.global.responsive = true;
+		Chart.defaults.global.maintainAspectRatio = false;
 	</script>
 
 </head>
@@ -99,60 +104,42 @@
 
 		<div class="row no-border">
 			<div class="six columns">
-				<div id="rchart" style="height:150px;"></div>
+				<canvas class="u-full-width" id="rchart" style="height:150px;"></canvas>
 				<script type="text/javascript">
-					rchart = c3.generate({
-						bindto: '#rchart',
-						tooltip: {
-							show: false
-						},
-						legend: {
-							show: false
-						},
-						axis: {
-						  y: {
-						    tick: {
-							  values: [250, 500, 1000, 1500, 2000, 3000, 4000, 5000]
-						    }
-						  }
-					  },
-						data: {
-					        columns: [
-					            ['d', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-					        ],
-					        types: {
-					            d: 'area-spline'
-					        }
-					    }
+					var rchartCtx = document.getElementById("rchart").getContext("2d");
+					var rchart = new Chart(rchartCtx).Line({
+						labels: getEmptyStringArray(dataPoints),
+						datasets: [
+							{
+								label: "Rounds Per Second",
+								fillColor: "rgba(50, 195, 240, 0.2)",
+								strokeColor: "rgba(50, 195, 240, 1)",
+								pointColor: "rgba(50, 195, 240, 1)",
+								pointStrokeColor: "#fff",
+								pointHighlightFill: "#fff",
+								pointHighlightStroke: "rgba(220,220,220,1)",
+								data: getEmptyArray(dataPoints)
+							}]
 					});
 				</script>
 			</div>
 			<div class="six columns">
-				<div id="fchart" style="height:150px;"></div>
+				<canvas class="u-full-width" id="fchart" style="height:170px;"></canvas>
 				<script type="text/javascript">
-					fchart = c3.generate({
-						bindto: '#fchart',
-						tooltip: {
-							show: false
-						},
-						legend: {
-							show: false
-						},
-						axis: {
-						  y: {
-						    tick: {
-							  values: [10, 50, 100, 150, 200, 250]
-						    }
-						  }
-					  },
-						data: {
-					        columns: [
-					            ['d', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-					        ],
-					        types: {
-					            d: 'area-spline'
-					        }
-					    }
+					var fchartCtx = document.getElementById("fchart").getContext("2d");
+					var fchart = new Chart(fchartCtx).Line({
+						labels: getEmptyStringArray(dataPoints),
+						datasets: [
+							{
+								label: "Fights Per Second",
+								fillColor: "rgba(50, 195, 240, 0.2)",
+								strokeColor: "rgba(50, 195, 240, 1)",
+								pointColor: "rgba(50, 195, 240, 1)",
+								pointStrokeColor: "#fff",
+								pointHighlightFill: "#fff",
+								pointHighlightStroke: "rgba(220,220,220,1)",
+								data: getEmptyArray(dataPoints)
+							}]
 					});
 				</script>
 			</div>
@@ -204,26 +191,26 @@
 					</ul>
 					{{end}}
 				</ul>
-				<div id="p{{$i}}chart" class="p-chart u-full-width border-top"></div>
+				<div class="p-chart border-top">
+					<canvas id="p{{$i}}chart"></canvas>
+				</div>
 				<script type="text/javascript">
-					charts['{{$i}}'] = c3.generate({
-						bindto: '#p{{$i}}chart',
-						tooltip: {
-							show: false
-						},
-						data: {
-							selection: {
-								enabled: true
-							},
-							colors: {
-								Passed: '#33C3F0',
-							},
-							columns: [
-								['Passed', {{$p.Phase.Passed}}],
-								['Failed', {{$p.Phase.GetFailed}}],
-							],
-							type: 'pie'
-						}
+					charts['{{$i}}'] = new Chart(document.getElementById("p{{$i}}chart").getContext("2d")).Pie([
+					    {
+					        value: {{$p.Phase.GetFailed}},
+					        color:"#106e8b",
+							highlight:"#167f9f",
+					        label: "Failed"
+					    },
+					    {
+					        value: {{$p.Phase.Passed}},
+					        color: "#33C3F0",
+							highlight:"#4acef7",
+					        label: "Passed"
+					    }
+					], {
+						showTooltips: true,
+						customTooltips: function(tooltip) { }
 					});
 				</script>
 				<ul>
@@ -293,6 +280,7 @@
 
 	</div>
 
+	<script src="js/sweetalert.min.js" charset="utf-8"></script>
 	<script src="js/cash.min.js" charset="utf-8"></script>
 	<script src="js/ws.js" charset="utf-8"></script>
 	<script>

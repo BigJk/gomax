@@ -30,6 +30,10 @@ creates a sample config.
 
 **example:** ```gomax config```
 
+## gomax webpanel
+
+**visit the local webpanel under:** ```http://127.0.0.1```
+
 ## gomax uses
 
 #### Back-end
@@ -42,5 +46,5 @@ creates a sample config.
 * [skeleton](http://getskeleton.com/)
 * [cash](http://kenwheeler.github.io/cash/)
 * [font awesome](https://fortawesome.github.io/Font-Awesome)
-* [d3](http://d3js.org/)
-* [c3](http://c3js.org/)
+* [chart.js](http://www.chartjs.org/)
+* [sweat alert](http://t4t5.github.io/sweetalert/)

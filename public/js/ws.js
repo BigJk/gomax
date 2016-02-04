@@ -1,5 +1,13 @@
 var socket = new WebSocket("ws://127.0.0.1:8080/ws");
 
+var metricData = {
+	rchart: [],
+	fchart: []
+};
+
+metricData.rchart = getEmptyArray(dataPoints);
+metricData.fchart = getEmptyArray(dataPoints);
+
 socket.onmessage = function(event) {
 	data = JSON.parse(event.data);
 	switch (data.Type) {
@@ -18,36 +26,45 @@ socket.onclose = function() {
 	$('#online').removeClass('blink');
 	$('#online').removeClass('fa-angle-double-up');
 	$('#online').addClass('fa-angle-double-down');
+
+	swal("Stopped", "gomax was successfully stopped", "success");
 };
 
 function addMetrics(d) {
 	$('#rps').text(d.Rounds);
-	rchart.flow({
-		columns: [
-			['d', d.Rounds]
-		],
-		length: 1,
-	});
-	if (rchart.data()[0].values.length > 16) {
-		rchart.data()[0].values = rchart.data()[0].values.slice(1, 17);
-		rchart.flush();
-	}
-
 	$('#fps').text(d.Fights);
-	fchart.flow({
-		columns: [
-			['d', d.Fights]
-		],
-		length: 1,
-	});
-	if (fchart.data()[0].values.length > 16) {
-		fchart.data()[0].values = fchart.data()[0].values.slice(1, 17);
-		fchart.flush();
+
+	metricData.rchart.push(d.Rounds);
+	metricData.rchart = metricData.rchart.slice(1);
+
+	metricData.fchart.push(d.Fights);
+	metricData.fchart = metricData.fchart.slice(1);
+
+	updateValues(rchart, metricData.rchart);
+	updateValues(fchart, metricData.fchart);
+}
+
+function updateValues(c, d) {
+	for (var i = 0; i < d.length; i++) {
+		c.datasets[0].points[i].value = d[i];
 	}
+	c.update();
 }
 
 function exit() {
-	call('/api/stop');
+	if (socket.readyState == socket.CLOSED) {
+		sweetAlert("Error!", "Program is already stopped!", "error");
+		return;
+	}
+	swal({
+		title: "Stop the program?",
+		type: "info",
+		showCancelButton: true,
+		closeOnConfirm: false,
+		showLoaderOnConfirm: true,
+	}, function() {
+		call('/api/stop');
+	});
 }
 
 function reloadCharts() {
@@ -59,15 +76,9 @@ function reloadCharts() {
 var chartData = {};
 
 function reloadChart(phase) {
-	if (charts[phase].data()[0].values[0].value == chartData[phase].Passed && charts[phase].data()[1].values[0].value == chartData[phase].Failed) {
-		return;
-	}
-	charts[phase].load({
-		columns: [
-			['Passed', chartData[phase].Passed],
-			['Failed', chartData[phase].Failed],
-		]
-	});
+	charts[phase].segments[0].value = chartData[phase].Failed;
+	charts[phase].segments[1].value = chartData[phase].Passed;
+	charts[phase].update();
 }
 
 function updatePhase(phase, d) {

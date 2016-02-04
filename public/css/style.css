@@ -36,9 +36,12 @@ body {
 }
 
 .p-chart {
-	margin-bottom: 30px;
-	padding-top: 15px;
-	height: 200px;
+	height: 250px;
+	width: 85%;
+}
+
+.p-chart canvas {
+	cursor: pointer;
 }
 
 .show {
@@ -107,6 +110,10 @@ h4 {
 .blink {
 	color: #33C3F0;
 	animation: blinker 1s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+}
+
+.sweet-alert button {
+	padding-top: 0 !important;
 }
 
 @keyframes blinker {
