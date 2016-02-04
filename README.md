@@ -32,7 +32,7 @@ creates a sample config.
 
 ## gomax webpanel
 
-**visit the local webpanel under:** ```http://127.0.0.1```
+**visit the local webpanel under:** ```http://127.0.0.1:8080```
 
 ## gomax uses
 
